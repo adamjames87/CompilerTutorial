@@ -58,11 +58,16 @@ and interpExp tbl exp =
         let tbl'', i = interpExp tbl' exp 
         (tbl'', i)
 
+let interp stm = 
+    let tbl = Map.empty
+    interpStm tbl stm
+
 
 let testStm1 = PrintStm [ NumExp(4);NumExp(5) ]
-let tbl = Map.empty
+let testStm2 = CompoundStm(AssignStm("a", NumExp(11)), PrintStm [ IdExp("a") ])
 
-let test1 = interpStm tbl testStm1 
+let test1 = interp testStm1 
+let test2 = interp testStm2
 
 printfn "A Test"
 
