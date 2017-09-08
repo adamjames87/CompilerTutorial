@@ -16,6 +16,7 @@ and exp =
     | EseqExp of stm * exp
 
 
+
 let rec maxargs = function
     | CompoundStm (fst, snd) -> max (maxargs fst)  (maxargs snd)
     | AssignStm (id, exp) -> 0
@@ -58,8 +59,14 @@ and interpExp tbl exp =
         (tbl'', i)
 
 
+let testStm1 = PrintStm [ NumExp(4);NumExp(5) ]
+let tbl = Map.empty
+
+let test1 = interpStm tbl testStm1 
+
+printfn "A Test"
 
 [<EntryPoint>]
 let main argv = 
-    printfn "%A" argv
+    testStm1 |> ignore
     0 // return an integer exit code
