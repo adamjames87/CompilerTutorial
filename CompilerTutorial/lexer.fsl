@@ -1,0 +1,94 @@
+﻿{
+module lexer
+open Microsoft.FSharp.Text.Lexing
+open System
+open System.Text
+
+type token = 
+    | LParen
+    | RParen
+    | LBrack
+    | RBrack
+    | LBrace
+    | RBrace
+    | Plus
+    | Minus
+    | Star
+    | Dot
+    | FSlash
+    | Eq
+    | IntDigits of (int)
+    | RealDigits of (float)
+    | While
+    | For
+    | To
+    | Break
+    | Let
+    | In
+    | End
+    | Fn
+    | Var
+    | Type
+    | ArrDef
+    | If
+    | Then
+    | Else
+    | Do
+    | Of
+    | Nil
+    | Eof
+    
+}
+
+let digit = ['0' - '9']
+let char = ['a' - 'z' 'A' - 'Z']
+let charOrDigit = char | digit
+let whitespace = [' ' '\t']
+let newline = ('\n' |'\r' '\n')
+let id = char charOrDigit*
+let dot = ['.']
+
+rule tokenize = parse
+    | whitespace {tokenize lexbuf}
+    // 
+    // parens  + brackets
+    //
+    | '(' {LParen}
+    | ')' {RParen}
+    | '[' {LBrack}
+    | ']' {RBrack}
+    | '{' {LBrace}
+    | '}' {RBrace}
+    // 
+    // punctuation
+    //
+    | '+' {Plus}
+    | '-' {Minus}
+    | '*' {Star}
+    | '.' {Dot}
+    | '/' {FSlash}
+    | '=' {Eq}
+    | ['-']?digit+ {IntDigits <| Int32.Parse(System.String.Concat(lexbuf.Lexeme))}
+    | ['-']?digit+ dot digit* { RealDigits <| float <| System.String.Concat(lexbuf.Lexeme) }
+    //
+    // keywords
+    //
+    | "while" {While}
+    | "for"	  {For}
+    | "to"   {To}
+    | "break" {Break}
+    | "let" {Let}
+    | "in" {In}
+    | "end" {End}
+    | "function" {Fn}
+    | "var" {Var}
+    | "type" {Type}
+    | "array" {ArrDef}
+    | "if" {If}
+    | "then" {Then}
+    | "else" {Else}
+    | "do" {Do}
+    | "of" {Of}
+    | "nil" {Nil}
+    | _ { failwith ("Parse Error")}
+    | eof {Eof}
